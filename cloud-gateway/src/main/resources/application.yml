@@ -6,6 +6,7 @@ spring:
     name: cloud-gateway
   cloud:
     gateway:
+      enabled: true
       routes:
       - id: product-service
         uri: lb://product-service
@@ -15,6 +16,9 @@ spring:
         uri: lb://order-service
         predicates:
         - Path=/api/orders/**
+      discovery:
+        locator:
+          enabled: true
 
 management:
   endpoints:
@@ -24,5 +28,7 @@ management:
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     serviceUrl:
       defaultZone: http://localhost:8000/eureka/

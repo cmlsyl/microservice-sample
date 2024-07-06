@@ -1,0 +1,30 @@
+version: '3'
+services:
+  sample-eureka-server:
+    build: 
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    image: sample-eureka-server
+    container_name: sample-eureka-server
+    network_mode: "host"
+  sample-cloud-gateway:
+    build: 
+      context: ./cloud-gateway
+      dockerfile: Dockerfile
+    image: sample-cloud-gateway
+    container_name: sample-cloud-gateway
+    network_mode: "host"
+  sample-product-service:
+    build: 
+      context: ./product-service
+      dockerfile: Dockerfile
+    image: sample-product-service
+    container_name: sample-product-service
+    network_mode: "host"
+  sample-order-service:
+    build: 
+      context: ./order-service
+      dockerfile: Dockerfile
+    image: sample-order-service
+    container_name: sample-order-service
+    network_mode: "host"
