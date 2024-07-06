@@ -24,13 +24,16 @@ To run the project:
 
 * run 'docker compose up -d' command
 
-* default ports:
+* default ports are:
   - 8000: eureka-server
   - 8001: cloud-gateway
   - 8002: product-service
   - 8003: order-service
 
-* open localhost:8000 on your web browser to see your services
+* open [eureka server management page](http://localhost:8000) on your web browser to see your services
+* for the service endpoint documentations you can look:
+  - [product service swagger url](http://localhost:8002/swagger-ui.html)
+  - [order service swagger url](http://localhost:8003/swagger-ui.html)
 
 For cleanup run the commands below:
 ```
