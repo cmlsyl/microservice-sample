@@ -2,7 +2,6 @@ package com.cs.orderservice.service;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,10 +40,6 @@ public class OrderService {
 	public OrderDTO create(OrderRequestDTO orderRequestDTO) {
 		ResponseEntity<ProductOrderResponse> response = productService.requestOrder(orderRequestDTO);
 
-		if (response.getStatusCode() != HttpStatus.OK) {
-			// TODO throw custom exception
-		}
-
 		ProductOrderResponse productOrderResponse = response.getBody();
 
 		Order order = new Order();
@@ -72,11 +67,7 @@ public class OrderService {
 
 		OrderRequestDTO payload = new OrderRequestDTO(orderItems.stream().map(item -> new OrderRequestItemDTO(item.getProductId(), item.getQuantity())).toList());
 
-		ResponseEntity<String> response = productService.cancelOrder(payload);
-
-		if (response.getStatusCode() != HttpStatus.OK) {
-			// TODO throw custom exception
-		}
+		productService.cancelOrder(payload);
 
 		order.setStatus(OrderStatus.CANCELLED);
 		save(order);

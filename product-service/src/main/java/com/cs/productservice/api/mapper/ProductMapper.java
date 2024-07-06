@@ -17,7 +17,7 @@ import com.cs.productservice.service.ProductService;
 public abstract class ProductMapper {
 	@Autowired
 	private ProductService productService;
-	
+
 	public abstract ProductDTO mapToProductDTO(Product source);
 	public abstract List<ProductDTO> mapToProductDTOList(List<Product> source);
 	public abstract Product mapToProduct(ProductDTO source);

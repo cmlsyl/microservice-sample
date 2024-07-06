@@ -13,6 +13,7 @@ import com.cs.orderservice.api.dto.OrderRequestDTO;
 import com.cs.orderservice.entity.Order;
 import com.cs.orderservice.entity.OrderStatus;
 import com.cs.orderservice.service.OrderService;
+import com.cs.orderservice.util.exception.OrderServiceException;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class OrderController {
 		Order order = orderService.findById(orderId);
 
 		if (order == null) {
-			return ResponseEntity.internalServerError().body("Can not found order with given id: " + orderId);
+			throw new OrderServiceException("Can not found order with given id: " + orderId);
 		}
 
 		order.setStatus(OrderStatus.COMPLETED);
@@ -61,7 +62,7 @@ public class OrderController {
 		Order order = orderService.findById(orderId);
 
 		if (order == null) {
-			return ResponseEntity.internalServerError().body("Can not found order with given id: " + orderId);
+			throw new OrderServiceException("Can not found order with given id: " + orderId);
 		}
 
 		orderService.cancel(order);

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.cs.productservice.api.dto.ProductOrderItemDTO;
 import com.cs.productservice.entity.Product;
 import com.cs.productservice.repository.ProductRepository;
+import com.cs.productservice.util.exception.ProductServiceException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class ProductService {
 		return productRepository.findById(id).orElse(null);
 	}
 
-	public List<Product> decrementStock(List<ProductOrderItemDTO> items) throws Exception {
+	public List<Product> decrementStock(List<ProductOrderItemDTO> items) {
 		try {
 			semaphore.acquire();
 
@@ -41,7 +42,7 @@ public class ProductService {
 
 			if (products.size() != items.size()) {
 				log.error("Can not found some of requested products");
-				throw new RuntimeException("Can not found some of requested products");
+				throw new ProductServiceException("Can not found some of requested products");
 			}
 
 			products.forEach(product -> {
@@ -51,26 +52,28 @@ public class ProductService {
 
 				if (product.getStockCount() < quantity) {
 					log.error("Insufficient stock count for product: {}", product.getId());
-					throw new RuntimeException("Insufficient stock count for product: " + product.getId());
+					throw new ProductServiceException("Insufficient stock count for product: " + product.getId());
 				}
 
 				product.setStockCount(product.getStockCount() - quantity);
 			});
 
 			return productRepository.saveAll(products);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
 		} finally {
 			semaphore.release();
 		}
 	}
 
-	public void incrementStock(List<ProductOrderItemDTO> items) throws Exception {
+	public void incrementStock(List<ProductOrderItemDTO> items) {
 		try {
 			semaphore.acquire();
 
 			List<Product> products = productRepository.findAllById(items.stream().map(item -> item.productId()).toList());
 
 			if (products.size() != items.size()) {
-				log.info("Can not found some of requested products");
+				log.warn("Can not found some of requested products");
 			}
 
 			products.forEach(product -> {
@@ -82,6 +85,8 @@ public class ProductService {
 			});
 
 			productRepository.saveAll(products);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
 		} finally {
 			semaphore.release();
 		}

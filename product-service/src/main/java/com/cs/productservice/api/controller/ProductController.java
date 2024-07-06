@@ -19,6 +19,7 @@ import com.cs.productservice.api.dto.ProductDTO;
 import com.cs.productservice.api.mapper.ProductMapper;
 import com.cs.productservice.entity.Product;
 import com.cs.productservice.service.ProductService;
+import com.cs.productservice.util.exception.ProductServiceException;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class ProductController {
 
 		if (product == null) {
 			log.error("Could not found product with given id: {}", id);
-			throw new RuntimeException("Can not found product with given id!");
+			throw new ProductServiceException("Can not found product with given id!");
 		}
 
 		log.info("Requested product is found, id: {}", id);
@@ -76,7 +77,7 @@ public class ProductController {
 
 		if (product == null) {
 			log.error("Could not found product with given id: {}", productDTO.id());
-			throw new RuntimeException("Can not found product with given id!");
+			throw new ProductServiceException("Can not found product with given id!");
 		}
 
 		productService.save(product);

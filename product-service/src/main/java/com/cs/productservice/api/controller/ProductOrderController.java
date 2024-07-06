@@ -27,42 +27,30 @@ public class ProductOrderController {
 
 	@PostMapping("request")
 	public ResponseEntity<ProductOrderResponseDTO> requestOrder(@Valid @RequestBody ProductOrderDTO orderDTO) {
-		try {
-			log.info("Order request: {}", orderDTO);
+		log.info("Order request: {}", orderDTO);
 
-			List<Product> products = productService.decrementStock(orderDTO.items());
+		List<Product> products = productService.decrementStock(orderDTO.items());
 
-			log.info("Order request is successfully processed: {}", orderDTO);
+		log.info("Order request is successfully processed: {}", orderDTO);
 
-			List<ProductOrderResponseItemDTO> responseDTOList = products.stream().map(product -> {
-				long quantity = orderDTO.items().stream()
-						.filter(item -> item.productId() == product.getId())
-						.map(item -> item.quantity()).findFirst().get();
-				return new ProductOrderResponseItemDTO(product.getId(), product.getPrice(), quantity);
-			}).toList();
+		List<ProductOrderResponseItemDTO> responseDTOList = products.stream().map(product -> {
+			long quantity = orderDTO.items().stream()
+					.filter(item -> item.productId() == product.getId())
+					.map(item -> item.quantity()).findFirst().get();
+			return new ProductOrderResponseItemDTO(product.getId(), product.getPrice(), quantity);
+		}).toList();
 
-			return ResponseEntity.ok(new ProductOrderResponseDTO(responseDTOList));
-		} catch (Exception e) {
-			log.error("Order request error", e);
-
-			return ResponseEntity.internalServerError().build();
-		}
+		return ResponseEntity.ok(new ProductOrderResponseDTO(responseDTOList));
 	}
 
 	@PostMapping("cancel")
 	public ResponseEntity<String> cancelRequestedOrder(@Valid @RequestBody ProductOrderDTO orderDTO) {
-		try {
-			log.info("Order cancellation request: {}", orderDTO);
+		log.info("Order cancellation request: {}", orderDTO);
 
-			productService.incrementStock(orderDTO.items());
+		productService.incrementStock(orderDTO.items());
 
-			log.info("Order cancelled successfully: {}", orderDTO);
+		log.info("Order cancelled successfully: {}", orderDTO);
 
-			return ResponseEntity.ok().build();
-		} catch (Exception e) {
-			log.error("Order cancel request error", e);
-
-			return ResponseEntity.internalServerError().body(e.getMessage());
-		}
+		return ResponseEntity.ok().build();
 	}
 }
