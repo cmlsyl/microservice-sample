@@ -40,6 +40,7 @@ public class ProductService {
 			List<Product> products = productRepository.findAllById(items.stream().map(item -> item.productId()).toList());
 
 			if (products.size() != items.size()) {
+				log.error("Can not found some of requested products");
 				throw new RuntimeException("Can not found some of requested products");
 			}
 
@@ -49,6 +50,7 @@ public class ProductService {
 						.map(item -> item.quantity()).findFirst().get();
 
 				if (product.getStockCount() < quantity) {
+					log.error("Insufficient stock count for product: {}", product.getId());
 					throw new RuntimeException("Insufficient stock count for product: " + product.getId());
 				}
 

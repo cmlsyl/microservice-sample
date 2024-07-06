@@ -42,7 +42,7 @@ public class OrderService {
 		ResponseEntity<ProductOrderResponse> response = productService.requestOrder(orderRequestDTO);
 
 		if (response.getStatusCode() != HttpStatus.OK) {
-			
+			// TODO throw custom exception
 		}
 
 		ProductOrderResponse productOrderResponse = response.getBody();
@@ -75,11 +75,10 @@ public class OrderService {
 		ResponseEntity<String> response = productService.cancelOrder(payload);
 
 		if (response.getStatusCode() != HttpStatus.OK) {
-			
+			// TODO throw custom exception
 		}
 
 		order.setStatus(OrderStatus.CANCELLED);
-
 		save(order);
 	}
 }

@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +14,6 @@ import com.cs.orderservice.entity.Order;
 import com.cs.orderservice.entity.OrderStatus;
 import com.cs.orderservice.service.OrderService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class OrderController {
 	}
 
 	@PutMapping("/{id}/complete")
-	public ResponseEntity<String> complete(@PathVariable("id") Long orderId) {
+	public ResponseEntity<String> complete(@PathVariable("id") long orderId) {
 		log.info("Order complete request, id: {}", orderId);
 
 		Order order = orderService.findById(orderId);
@@ -55,7 +55,7 @@ public class OrderController {
 	}
 
 	@PutMapping("/{id}/cancel")
-	public ResponseEntity<String> cancel(@PathVariable("id") Long orderId) {
+	public ResponseEntity<String> cancel(@PathVariable("id") long orderId) {
 		log.info("Order cancel request, id: {}", orderId);
 
 		Order order = orderService.findById(orderId);

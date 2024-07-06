@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cs.productservice.api.dto.ProductOrderDTO;
 import com.cs.productservice.api.dto.ProductOrderResponseDTO;
-import com.cs.productservice.api.mapper.ProductMapper;
+import com.cs.productservice.api.dto.ProductOrderResponseItemDTO;
 import com.cs.productservice.entity.Product;
 import com.cs.productservice.service.ProductService;
 
@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("api/products/order")
 public class ProductOrderController {
 	private final ProductService productService;
-	private final ProductMapper productMapper;
 
 	@PostMapping("request")
 	public ResponseEntity<ProductOrderResponseDTO> requestOrder(@Valid @RequestBody ProductOrderDTO orderDTO) {
@@ -35,7 +34,14 @@ public class ProductOrderController {
 
 			log.info("Order request is successfully processed: {}", orderDTO);
 
-			return ResponseEntity.ok(new ProductOrderResponseDTO(productMapper.mapToProductDTOList(products)));
+			List<ProductOrderResponseItemDTO> responseDTOList = products.stream().map(product -> {
+				long quantity = orderDTO.items().stream()
+						.filter(item -> item.productId() == product.getId())
+						.map(item -> item.quantity()).findFirst().get();
+				return new ProductOrderResponseItemDTO(product.getId(), product.getPrice(), quantity);
+			}).toList();
+
+			return ResponseEntity.ok(new ProductOrderResponseDTO(responseDTOList));
 		} catch (Exception e) {
 			log.error("Order request error", e);
 
