@@ -2,14 +2,14 @@ package com.cs.orderservice.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cs.orderservice.api.dto.OrderDTO;
 import com.cs.orderservice.api.dto.OrderRequestDTO;
 import com.cs.orderservice.api.dto.OrderRequestItemDTO;
-import com.cs.orderservice.api.mapper.OrderItemMapper;
 import com.cs.orderservice.entity.Order;
 import com.cs.orderservice.entity.OrderItem;
 import com.cs.orderservice.entity.OrderStatus;
@@ -26,10 +26,13 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final ProductService productService;
-	private final OrderItemMapper orderItemMapper;
 
 	public Order save(Order entity) {
 		return orderRepository.save(entity);
+	}
+
+	public Page<Order> findAll(PageRequest pageRequest) {
+		return orderRepository.findAll(pageRequest);
 	}
 
 	public Order findById(long id) {
@@ -37,7 +40,7 @@ public class OrderService {
 	}
 
 	@Transactional
-	public OrderDTO create(OrderRequestDTO orderRequestDTO) {
+	public Order create(OrderRequestDTO orderRequestDTO) {
 		ResponseEntity<ProductOrderResponse> response = productService.requestOrder(orderRequestDTO);
 
 		ProductOrderResponse productOrderResponse = response.getBody();
@@ -59,7 +62,9 @@ public class OrderService {
 
 		orderItemRepository.saveAll(orderItems);
 
-		return new OrderDTO(order.getId(), order.getStatus().ordinal(), order.getTotalPrice(), orderItemMapper.mapToOrderItemDTOList(orderItems));
+		order.setItems(orderItems);
+
+		return order;
 	}
 
 	public void cancel(Order order) {
